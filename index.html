@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HỎI ĐÁP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bear-img {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #000;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        /* Nút xanh */
+        #btnYes {
+            background-color: #00b020;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+
+        /* Nút đỏ */
+        #btnNo {
+            background-color: #ff4742;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease, left 0.3s ease;
+        }
+
+        /* Màn hình hiển thị Video chung (dùng chung cho cả màn hình Troll và màn hình đồng ý) */
+        .video-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .video-screen video {
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+        }
+
+        .video-screen h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <img src="Heart Couple GIF.gif" alt="Cute Bear" class="bear-img">
+        
+        <h2>CÓ BỊ NGÂY KHÔNG</h2>
+        
+        <div class="button-group" id="btnGroup">
+            <button id="btnYes">CÓ</button>
+            <button id="btnNo">KHÔNG</button>
+        </div>
+    </div>
+
+    <!-- Màn hình Troll (xuất hiện khi bấm nút đỏ 3 lần) -->
+    <div id="trollScreen" class="video-screen">
+        <h1>  TAO NÓI MÀ 😂</h1>
+        <video id="trollVideo" loop>
+            <!-- Thay link video troll của bro vào đây -->
+            <source src="1792158165378_119800474562246694_374670281327945404.mp4" type="video/mp4">
+            Trình duyệt không hỗ trợ video.
+        </video>
+    </div>
+
+    <!-- Màn hình Video Đồng Ý (xuất hiện khi bấm nút xanh) -->
+    <div id="successScreen" class="video-screen">
+        <h1 style="color: #ff4742;">Yeaah! Biết ngay mà!</h1>
+        <video id="successVideo" controls>
+            <!-- Thay link video lãng mạn/ngọt ngào vào đây -->
+            <source src="SaveTik.io_7220823156628393243.mp4" type="video/mp4">
+            Trình duyệt không hỗ trợ video.
+        </video>
+    </div>
+
+    <script>
+    const btnNo = document.getElementById('btnNo');
+    const btnYes = document.getElementById('btnYes');
+    const mainContainer = document.getElementById('mainContainer');
+    
+    const trollScreen = document.getElementById('trollScreen');
+    const trollVideo = document.getElementById('trollVideo');
+
+    const successScreen = document.getElementById('successScreen');
+    const successVideo = document.getElementById('successVideo');
+
+    // Mảng danh sách các câu chữ sẽ đổi mỗi lần ấn nút đỏ (bro thích đổi gì thì sửa trong này nhé)
+    const noTexts = [
+        "Không",                 // Lần ấn thứ 1
+        "Chắc chứ?",             // Lần ấn thứ 2
+        "Suy nghĩ lại chưa?",
+        "rồi ok " // Lần ấn thứ 3 (trước khi nhảy vào video troll)
+    ];
+
+    let clickCount = 0;
+    let yesScale = 1;      
+    let noTranslateX = 0;  
+
+    // Xử lý khi ấn nút đỏ ("Không")
+    btnNo.addEventListener('click', function() {
+        clickCount++;
+
+        if (clickCount < 4) {
+            // Nút xanh to lên, nút đỏ dịch sang trái
+            yesScale += 0.4;
+            noTranslateX += 45; 
+
+            btnYes.style.transform = `scale(${yesScale})`;
+            btnNo.style.transform = `translateX(${noTranslateX}px)`;
+
+            // Đổi text bên trong nút đỏ theo số lần bấm
+            btnNo.innerText = noTexts[clickCount];
+        } else {
+            // Đủ 3 lần: Hiện màn hình video troll
+            mainContainer.style.display = 'none';
+            trollScreen.style.display = 'flex';
+            trollVideo.play();
+        }
+    });
+    // Xử lý khi ấn nút xanh ("Em đồng ý")
+    btnYes.addEventListener('click', function() {
+        mainContainer.style.display = 'none';
+        successScreen.style.display = 'flex';
+        successVideo.play();
+    });
+</script>
+</body>
+</html>
